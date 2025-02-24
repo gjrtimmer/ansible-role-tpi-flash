@@ -1,4 +1,6 @@
 # Ansible Role
+.ansible/**
+!.ansible/.keep
 ansible.cfg
 .lock
 tests/roles
