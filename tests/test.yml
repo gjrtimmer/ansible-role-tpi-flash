@@ -2,6 +2,7 @@
 ---
 - name: Test flash nodes
   hosts: "{{ ansible_limit|default('nodes,!tpi') }}"
+  gather_facts: false
   remote_user: root
   roles:
-    - ansible-tpi-flash # noqa
+    - ansible-tpi-flash
