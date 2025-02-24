@@ -1,0 +1,29 @@
+#SPDX-License-Identifier: MIT-0
+tpi:
+  hosts:
+    bmc: # Use this value in the node `bmc` key
+      ansible_host: 192.168.10.15 # <-- Change this
+      ansible_user: root
+
+nodes:
+  hosts:
+    node1:
+      bmc: bmc
+      slot: 1
+      type: RK1
+      root: /dev/nvme0n1
+    node2:
+      bmc: bmc
+      slot: 2
+      type: RK1
+      root: /dev/nvme0n1
+    node3:
+      bmc: bmc
+      slot: 3
+      type: RK1
+      root: /dev/nvme0n1
+    node4:
+      bmc: bmc
+      slot: 4
+      type: RK1
+      root: /dev/nvme0n1

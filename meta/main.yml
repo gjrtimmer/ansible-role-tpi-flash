@@ -1,0 +1,13 @@
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: G.J.R. Timmer
+  description: Flash OS to Turing PI nodes
+  license: MIT
+  min_ansible_version: "2.18"
+  galaxy_tags:
+    - turingpi
+    - tpi
+    - RK1
+    - CM4
+
+dependencies: []

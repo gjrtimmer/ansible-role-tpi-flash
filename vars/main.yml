@@ -1,0 +1,24 @@
+#SPDX-License-Identifier: MIT-0
+---
+flash:
+  # Flash through SDCard by default
+  sdcard: true
+  
+  # This variable will trigger the flashing of a node.
+  # var: flash.node
+  node: false
+
+  # This variable will force flashing of a node.
+  # var: flash.force
+  force: false
+
+  # Image versions
+  version:
+    # RockChip version
+    rockchip: 2.4.0
+
+    # RK1 Image version
+    rk1: 24.04
+
+    # Raspberry Pi 4 Image version
+    cm4: 24.04.1
