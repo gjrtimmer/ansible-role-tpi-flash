@@ -158,7 +158,15 @@ Create a synlink to the parent directory of the git repository to be able to tes
 ln -s ../.. ./tests/roles
 ```
 
+Create a `ansible.cfg` in the repository root.
+
+```ini
+[default]
+
+inventory = ./tests/hosts.yml
+```
+
 This will ensure you are able to test the role.
 
-- Test Command: `ansible-playbook tests/test.yml -i tests/inventory.yml`
-- Synatax Check: `ansible-playbook tests/test.yml -i tests/inventory.yml`
+- Test Command: `ansible-playbook tests/test.yml -i tests/hostys.yml`
+- Synatax Check: `ansible-playbook tests/test.yml -i tests/hosts.yml --syntax-check`
