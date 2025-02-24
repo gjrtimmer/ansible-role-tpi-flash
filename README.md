@@ -155,7 +155,7 @@ In order to contribute to this repository you can make changes to the inventory 
 Create a synlink to the parent directory of the git repository to be able to test it.
 
 ```shell
-ln -s .. ./tests/roles
+ln -s ../.. ./tests/roles
 ```
 
 This will ensure you are able to test the role.
