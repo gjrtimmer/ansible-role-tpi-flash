@@ -1,0 +1,17 @@
+# Check status of nodes
+- name: Check node {{ bmc }}/#{{ slot }} ({{ node }})
+  delegate_to: localhost
+  ansible.builtin.wait_for:
+    host: {{ node }}
+    port: 22
+    timeout: 5
+  failed_when: false
+  register: node_check
+
+- name: Check node {{ bmc }}/#{{ slot }} ({{ node }})
+  ansible.builtin.debug:
+    var: node_check
+
+- name: Set node status
+  ansible.builtin.set_fact:
+    node_status: "{{ not node_check is search('Timeout') | bool }}"
