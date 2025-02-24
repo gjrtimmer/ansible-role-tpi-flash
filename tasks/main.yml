@@ -3,4 +3,5 @@
 
 - name: List nodes
   ansible.builtin.debug:
-    msg: test
+    var: hostvars
+    # msg: "Node: {{ inventory_hostname }}"
