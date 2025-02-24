@@ -1,4 +1,6 @@
-# Check status of nodes
+# SPDX-License-Identifier: MIT-0
+#
+# Check node status
 - name: Check node {{ bmc }}/#{{ slot }} ({{ node }})
   delegate_to: localhost
   ansible.builtin.wait_for:
