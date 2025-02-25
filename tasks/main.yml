@@ -4,7 +4,9 @@
 - name: Flash Nodes
   when: >
     inventory_hostname in groups['nodes'] and
+    inventory_hostname == hostvars[node].inventory_hostname and
     ansible_limit | default('nodes,!tpi')
-  block:
-    - name: Check Node BMC Status
-      ansible.builtin.include_tasks: tasks/status_bmc.yml
+  ansible.builtin.include_tasks: tasks/status_bmc.yml
+  with_items: "{{ groups['nodes'] }}"
+  loop_control:
+    loop_var: node

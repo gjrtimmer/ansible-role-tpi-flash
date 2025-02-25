@@ -4,6 +4,5 @@
   hosts: "{{ ansible_limit|default('nodes,!tpi') }}"
   gather_facts: false
   remote_user: root
-  serial: true
   roles:
     - ansible-tpi-flash
