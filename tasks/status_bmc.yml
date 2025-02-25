@@ -1,17 +1,17 @@
 # SPDX-License-Identifier: MIT-0
 #
 # Check node status
-- name: Check BMC status for Nodes
+- name: Check BMC status
   delegate_to: localhost
   ansible.builtin.wait_for:
-    host: "{{ hostvars[bmc]['ansible_host'] }}"
+    host: "{{ hostvars[hostvars[inventory_hostname]['bmc']]['ansible_host'] }}"
     port: 22
     timeout: 5
   failed_when: false
   register: node_check
 
 - name: Check BMC status
-  tags: [ 'never', 'debug' ]
+  tags: [never,debug]
   ansible.builtin.debug:
     var: node_check
 
@@ -19,6 +19,6 @@
   ansible.builtin.set_fact:
     node_status: "{{ not node_check is search('Timeout') | bool }}"
 
-- name: BMC Status for Nodes
+- name: BMC Status
   ansible.builtin.debug:
     var: node_status
