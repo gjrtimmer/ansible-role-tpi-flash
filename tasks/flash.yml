@@ -69,7 +69,27 @@
     mode: "0644"
 
 - name: Copy Image to BMC SDCard
-  when: flash_sdcard | bool and not remote_image_marker_exists.stat.exists | bool
   delegate_to: localhost
+  when: flash_sdcard | bool and not remote_image_marker_exists.stat.exists | bool
   ansible.builtin.raw: "scp {{ flash.image.path.local }}/{{ image.file.target }} {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }}:{{ flash.image.path.remote }}/{{ image.file.target }}"
   changed_when: false
+
+- name: Ensure Shutdown Node {{ hostname }}
+  delegate_to: localhost
+  ansible.builtin.raw: "tpi power off -n {{ node.slot }}"
+
+- name: Flash Node Remote {{ hostname }}
+  delegate_to: localhost
+  when: flash_node | bool and flash_sdcard | bool
+  ansible.builtin.raw: "tpi flash --local --image-path {{ flash.image.path.remote }}/{{ image.file.target }} --sha256 {{ image.sha }} -n {{ node.slot }} > {{ flash.image.path.local}}/flash.{{ hostname}}.log 2>&1"
+  register: flash_report
+  
+- name: Flash Node Local {{ hostname }}
+  delegate_to: localhost
+  when: flash_node | bool and not flash_sdcard | bool
+  ansible.builtin.raw: "tpi flash --image-path {{ flash.image.path.remote }}/{{ image.file.target }} --sha256 {{ image.sha }} -n {{ node.slot }} > {{ flash.image.path.local}}/flash.{{ hostname}}.log 2>&1"
+  register: flash_report
+
+- name: Show Flash Report {{ hostname }}
+  ansible.builtin.debug:
+    var: flash_report
