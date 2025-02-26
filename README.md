@@ -1,6 +1,15 @@
 # TPI Flash
 
 Role to flash an OS to a TuringPI node, this role supports flashing a RK1 module or a Raspberry Compute Module 4.
+After flashing this Ansible role will turn off the nodes in case the user wants to bootstrap the nodes first with
+cloud-init before booting the nodes for the first time.
+
+> **IMPORTANT**
+>
+> Please note that the tpi user/password is written to the hosts file, this is required because on some platforms ike MacOS
+> Ansible is unable to get a `input reader` and therefor the user/password must be provided to run the `tpi` commands.
+>
+> This is marked for improvement in the future.
 
 ## Requirements
 
@@ -36,7 +45,8 @@ tpi:
   hosts:
     bmc: # Use this value in the node `bmc` key
       ansible_host: 192.168.10.15 # <-- Change this
-      ansible_user: root
+      tpi_user: root
+      tpi_pass: turing # <-- Change this if required
 
 nodes:
   hosts:
@@ -68,10 +78,12 @@ tpi:
   hosts:
     tpi1_rk1: # Turing PI #1 with only RK1 modules, use this value in the node `bmc` key
       ansible_host: 192.168.10.15 # <-- Change this
-      ansible_user: root
+      tpi_user: root
+      tpi_pass: turing # <-- Change this if required
     tpi2_cm4: # Turing PI #2 with only CM4 modules, use this value in the node `bmc` key
       ansible_host: 192.168.10.35 # <-- Change this
-      ansible_user: root
+      tpi_user: root
+      tpi_pass: turing # <-- Change this if required
 
 nodes:
   hosts:
