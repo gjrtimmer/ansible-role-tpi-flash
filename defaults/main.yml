@@ -37,7 +37,7 @@ flash:
       sha: 88584d5797bac01efd3bb1063935ce9f00947e4d4aa0c671d0a39ec8db6ca8f7
       file: 
         source: ubuntu-{{ flash_version_rk1 }}-preinstalled-server-arm64-turing-rk1.img.xz
-        remote: ubuntu-{{ flash_version_rk1 }}-rk1.img.xz
+        target: ubuntu-{{ flash_version_rk1 }}-rk1.img.xz
 
     # Raspberry Pi 4 image details
     cm4:
