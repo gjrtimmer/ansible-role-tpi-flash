@@ -23,7 +23,7 @@
       ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} 'mkdir -p {{ flash.image.path.remote }}'"
       when: not remote_dir_exists.stdout_lines[0] | bool
 
-    - name: Check image on BMC
+    - name: Check Image on BMC
       ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} '[ -f {{ flash.image.path.remote }}/{{ image.file.target }} ]' && echo true || echo false"
       register: remote_file_exists
       changed_when: false
@@ -38,7 +38,7 @@
         mode: "0755"
       changed_when: false
 
-    - name: Check image
+    - name: Check Image exists
       ansible.builtin.stat:
         path: "{{ flash.image.path.local }}/{{ image.file.target }}"
       register: local_image_exists
