@@ -22,6 +22,14 @@
     path: "{{ flash.image.path.local }}/remote_image_exists"
     state: absent
 
+- name: Create Local Directory
+  delegate_to: localhost
+  when: flash_node | bool
+  ansible.builtin.file:
+    path: "{{ flash.image.path.local }}"
+    state: directory
+    mode: "0755"
+
 - name: Flash Nodes
   when: >
     inventory_hostname in groups['nodes'] and
