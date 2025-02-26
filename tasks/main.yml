@@ -9,7 +9,7 @@
       register: cmd_tpi_exists
       check_mode: false
       changed_when: false
-      failed_when: cmd_tpi_exists.rc != 0 or cmd_tpi_exists.rc != 127
+      failed_when: cmd_tpi_exists.rc != 0
   rescue:
     - name: Command Not Found
       ansible.builtin.fail:
