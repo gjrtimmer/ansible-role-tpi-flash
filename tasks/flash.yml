@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MIT-0
+---
+- name: Image RK1
+  ansible.builtin.set_fact:
+    image: "{{ flash.image.rk1 }}"
+  when: node.type|upper == 'RK1'
+
+- name: Image CM4
+  ansible.builtin.set_fact:
+    image: "{{ flash.image.cm4 }}"
+  when: node.type|upper == 'CM4'
