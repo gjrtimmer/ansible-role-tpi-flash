@@ -16,7 +16,6 @@
       ansible.builtin.set_fact:
         retry: "{{ retry | default(0) | int + 1 }}"
 
-
     - name: Check BMC Status for {{ hostname }}
       ansible.builtin.include_tasks: tasks/status.yml
       vars:
