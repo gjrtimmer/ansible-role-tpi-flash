@@ -134,15 +134,15 @@ Example; force flash a node that is online and can be contacted use; `-e flash_n
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-  ```yaml
-  ---
-  - name: Test flash nodes
-    hosts: "{{ ansible_limit|default('nodes,!tpi') }}"
-    gather_facts: false
-    remote_user: root
-    roles:
-      - gjrtimmer.tpi-flash
-  ```
+```yaml
+---
+- name: Test flash nodes
+  hosts: "{{ ansible_limit|default('nodes,!tpi') }}"
+  gather_facts: false
+  remote_user: root
+  roles:
+    - gjrtimmer.tpi-flash
+```
 
 ## License
 
