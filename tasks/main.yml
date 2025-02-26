@@ -1,6 +1,21 @@
 # SPDX-License-Identifier: MIT-0
 ---
 
+- name: TPI CLI Check
+  delegate_to: localhost
+  block:
+    - name: Command Exists
+      shell: command -v tpi >/dev/null 2>&1
+      register: cmd_tpi_exists
+      check_mode: false
+      changed_when: false
+      failed_when: cmd_tpi_exists.rc != 0 or cmd_tpi_exists.rc != 127
+  rescue:
+    - name: Command Not Found
+      ansible.builtin.fail:
+        msg: "'tpi' command not found"
+      changed_when: false
+
 - name: Clear remote-image Marker
   delegate_to: localhost
   when: flash_node | bool and flash_sdcard | bool
