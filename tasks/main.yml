@@ -1,6 +1,13 @@
 # SPDX-License-Identifier: MIT-0
 ---
 
+- name: Clear Remote Image Marker
+  delegate_to: localhost
+  when: flash_node | bool and flash_sdcard | bool
+  ansible.builtin.file:
+    path: "{{ flash.image.path.local }}/remote_image_exists"
+    state: absent
+
 - name: Flash Nodes
   when: >
     inventory_hostname in groups['nodes'] and

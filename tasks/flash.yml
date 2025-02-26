@@ -10,23 +10,37 @@
     image: "{{ flash.image.cm4 }}"
   when: node.type|upper == 'CM4'
 
-- name: Check Image Remote
-  when: flash_sdcard | bool
+- name: Check remote-image marker
   delegate_to: localhost
-  block:
-    - name: Check target directory on BMC
-      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} '[ -d {{ flash.image.path.remote }} ]' && echo true || echo false"
-      register: remote_dir_exists
-      changed_when: false
+  ansible.builtin.stat:
+    path: "{{ flash.image.path.local }}/remote_image_exists"
+  register: remote_image_marker_exists
 
-    - name: Create target directory on BMC
-      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} 'mkdir -p {{ flash.image.path.remote }}'"
-      when: not remote_dir_exists.stdout_lines[0] | bool
+- name: Check Image on BMC
+  when: flash_sdcard | bool and not remote_image_marker_exists.stat.exists | bool
+  delegate_to: localhost
+  ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} 'mkdir -p {{ flash.image.path.remote }} && [ -f {{ flash.image.path.remote }}/{{ image.file.target }} ]' && echo true || echo false"
+  register: remote_file_exists
+  changed_when: false
 
-    - name: Check Image on BMC
-      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} '[ -f {{ flash.image.path.remote }}/{{ image.file.target }} ]' && echo true || echo false"
-      register: remote_file_exists
-      changed_when: false
+- name: Place remote-image Marker
+  delegate_to: localhost
+  when: >
+    flash_sdcard | bool and 
+    ( 
+      not remote_image_marker_exists.stat.exists | bool 
+      and 
+      remote_file_exists.stdout_lines[0] | bool 
+    )
+  ansible.builtin.file:
+    path: "{{ flash.image.path.local }}/remote_image_exists"
+    state: touch
+
+- name: Reload remote-image Marker
+  delegate_to: localhost
+  ansible.builtin.stat:
+    path: "{{ flash.image.path.local }}/remote_image_exists"
+  register: remote_image_marker_exists
 
 - name: Check Image Local
   delegate_to: localhost
@@ -47,7 +61,7 @@
 - name: Download Image
   delegate_to: localhost
   when: >
-    not (flash_sdcard | bool and not remote_file_exists.stdout_lines[0] | bool) and 
+    not (flash_sdcard | bool and not remote_image_marker_exists.stat.exists | bool) and 
     not (flash_sdcard | bool and not local_image_exists.stat.exists | bool)
   ansible.builtin.get_url:
     url: "{{ image.url }}/{{ image.file.source }}"
@@ -55,7 +69,7 @@
     mode: "0644"
 
 - name: Copy Image to BMC SDCard
-  when: flash_sdcard | bool and not remote_file_exists.stdout_lines[0] | bool
+  when: flash_sdcard | bool and not remote_image_marker_exists.stat.exists | bool
   delegate_to: localhost
   ansible.builtin.raw: "scp {{ flash.image.path.local }}/{{ image.file.target }} {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }}:{{ flash.image.path.remote }}/{{ image.file.target }}"
   changed_when: false
