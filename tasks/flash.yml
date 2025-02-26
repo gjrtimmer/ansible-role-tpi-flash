@@ -9,3 +9,53 @@
   ansible.builtin.set_fact:
     image: "{{ flash.image.cm4 }}"
   when: node.type|upper == 'CM4'
+
+- name: Check Image Remote
+  when: flash_sdcard == true
+  delegate_to: localhost
+  block:
+    - name: Check target directory on BMC
+      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} '[ -d {{ flash.image.path.remote }} ]' && echo true || echo false"
+      register: remote_dir_exists
+      changed_when: false
+
+    - name: Create target directory on BMC
+      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} 'mkdir -p {{ flash.image.path.remote }}'"
+      when: not remote_dir_exists.stdout_lines[0] | bool
+
+    - name: Check image on BMC
+      ansible.builtin.raw: "ssh {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }} '[ -f {{ flash.image.path.remote }}/{{ image.file.target }} ]' && echo true || echo false"
+      register: remote_file_exists
+      changed_when: false
+
+- name: Check Image Local
+  delegate_to: localhost
+  block:
+    - name: Check target directory
+      ansible.builtin.file:
+        path: "{{ flash.image.path.local }}"
+        state: directory
+        mode: "0755"
+      changed_when: false
+
+    - name: Check image
+      ansible.builtin.stat:
+        path: "{{ flash.image.path.local }}/{{ image.file.target }}"
+      register: local_image_exists
+      changed_when: false
+
+- name: Download Image
+  delegate_to: localhost
+  when: >
+    not (flash_sdcard == true and not remote_file_exists.stdout_lines[0] | bool) and 
+    not (flash_sdcard == false and not local_image_exists.stat.exists | bool)
+  ansible.builtin.get_url:
+    url: "{{ image.url }}/{{ image.file.source }}"
+    dest: "{{ flash.image.path.local }}/{{ image.file.target }}"
+    mode: "0644"
+
+- name: Copy Image to BMC SDCard
+  when: flash_sdcard == true and not remote_file_exists.stdout_lines[0] | bool
+  delegate_to: localhost
+  ansible.builtin.raw: "scp {{ flash.image.path.local }}/{{ image.file.target }} {{ hostvars[node.bmc]['ansible_user'] }}@{{ hostvars[node.bmc]['ansible_host'] }}:{{ flash.image.path.remote }}/{{ image.file.target }}"
+  changed_when: false
