@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: MIT-0
 ---
-
-- name: TPI CLI Check
+- name: TPI Check
   delegate_to: localhost
   block:
     - name: Command Exists
