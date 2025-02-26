@@ -2,7 +2,7 @@
 
 galaxy_info:
   role_name: tpi_flash
-  author: gjrtimmer
+  author: G.J.R. Timmer
   description: Flash OS to Turing PI nodes
   license: MIT
   min_ansible_version: "2.18"
