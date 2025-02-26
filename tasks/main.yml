@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT-0
 ---
 
-- name: Clear Remote Image Marker
+- name: Clear remote-image Marker
   delegate_to: localhost
   when: flash_node | bool and flash_sdcard | bool
   ansible.builtin.file:
