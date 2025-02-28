@@ -4,7 +4,7 @@
   delegate_to: localhost
   block:
     - name: Command Exists
-      shell: command -v tpi >/dev/null 2>&1
+      ansible.builtin.shell: command -v tpi >/dev/null 2>&1
       register: cmd_tpi_exists
       check_mode: false
       changed_when: false
